@@ -1,65 +1,59 @@
-require('dotenv').config();
-
-const fs = require('fs');
-const path = require('node:path')
-const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
-
+import fs from "node:fs/promises";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from "discord.js";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
-
 client.commands = new Collection();
 
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
+client.once(Events.ClientReady, async (readyClient) => {
+  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
-for (const folder of commandFolders) {
-	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+  const foldersPath = path.resolve("commands");
+  const commandNames = await fs.readdir(foldersPath); 
 
-	for (const file of commandFiles) {
-		const filePath = path.join(commandsPath, file);
-		const command = require(filePath);
-		// Set a new item in the Collection with the key as the command name and the value as the exported module
-		if ('data' in command && 'execute' in command) {
-			client.commands.set(command.data.name, command);
-		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-		}
-	}
-}
+  
+  const commands = commandNames.map(async name => { 
+	const filePath = path.resolve(foldersPath, name);
+	const file = await import(pathToFileURL(filePath).href);
+	client.commands.set(file.default.data.name, file.default);
+	return file.default.data.toJSON();
+  });
+ 
+  const commandData = await Promise.all(commands); 
+  await client.application.commands.set(commandData);
 
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-
-	const command = interaction.client.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
-
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-		}
-	}
 });
 
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  const command = interaction.client.commands.get(interaction.commandName);
+
+  if (!command) {
+    console.error(`No command matching ${interaction.commandName} was found.`);
+    return;
+  }
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(error);
+
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({
+        content: "There was an error while executing this command!",
+        ephemeral: true,
+      });
+
+    } else {
+      await interaction.reply({
+        content: "There was an error while executing this command!",
+        ephemeral: true,
+      });
+    }
+  }
+});
 
 const token = process.env.TOKEN;
 client.login(token);
-
-
-
-
-

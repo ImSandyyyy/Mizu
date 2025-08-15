@@ -1,13 +1,14 @@
-const { SlashCommandBuilder } = require('discord.js');
+import { SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('define')
         .setDescription('Get definition of a word')
         .addStringOption(option =>
             option.setName('word')
                 .setDescription('Word to define')
-                .setRequired(true)),
+                .setRequired(true)
+            ),
     async execute(interaction) {
         const word = interaction.options.getString('word');
 

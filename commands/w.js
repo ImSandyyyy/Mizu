@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require("discord.js")
+import { SlashCommandBuilder } from 'discord.js';
 
 let countW = 0;
 
-module.exports = {
+export default {
 	data: new SlashCommandBuilder()
 		.setName('w')
 		.setDescription("W's in the chat!"),
