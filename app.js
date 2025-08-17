@@ -19,8 +19,9 @@ client.once(Events.ClientReady, async (readyClient) => {
 	client.commands.set(file.default.data.name, file.default);
 	return file.default.data.toJSON();
   });
- 
-  const commandData = await Promise.all(commands); 
+
+  const commandSettled = await promise.allSettled(commands);
+  const commandData = commandSettled.filter(res => res.status === "fulfilled").map(res => res.value);
   await client.application.commands.set(commandData);
 
 });
