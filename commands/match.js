@@ -46,8 +46,8 @@ export default {
         const madridMatch = await getUpcomingMatch(TEAM_IDS.madrid);
         const barcaMatch = await getUpcomingMatch(TEAM_IDS.barcelona);
         const liverpoolMatch = await getUpcomingMatch(TEAM_IDS.liverpool);
-        const MancityMatch = await getUpcomingMatch(TEAM_IDS.ManCity);
-        const ManutdMatch = await getUpcomingMatch(TEAM_IDS.ManUtd);
+        const manCityMatch = await getUpcomingMatch(TEAM_IDS.ManCity);
+        const manUtdMatch = await getUpcomingMatch(TEAM_IDS.ManUtd);
         const psgMatch = await getUpcomingMatch(TEAM_IDS.psg);
 
         const embed = new EmbedBuilder()
@@ -69,11 +69,11 @@ export default {
                 },
                 {
                     name: "\u200B ",
-                    value: `**${MancityMatch.teams}**\n ${MancityMatch.date}`
+                    value: `**${manCityMatch.teams}**\n ${manCityMatch.date}`
                 },
                  {
                     name: "\u200B",
-                    value: `**${ManutdMatch.teams}**\n ${ManutdMatch.date}`
+                    value: `**${manUtdMatch.teams}**\n ${manUtdMatch.date}`
                 },
                 {
                     name: "\u200B ",
