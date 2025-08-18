@@ -11,7 +11,7 @@ export default {
             const quote = await response.json();
 
               const embed = new EmbedBuilder()
-                .setColor(0x1abc9c) 
+                .setColor(0x9b59b6) 
                 .setTitle("💭 Wise Words")
                 .setDescription(`*"${quote[0].q}"*`)
                 .setFooter({ text: `— ${quote[0].a}` });
