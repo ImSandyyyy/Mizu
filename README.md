@@ -26,6 +26,5 @@ DISCORD_TOKEN=your_token_here
 
 ```bash
 # Run the bot
-bun run dev        # Development mode
-bun run start      # Production mode
+npm run dev        
 ```
