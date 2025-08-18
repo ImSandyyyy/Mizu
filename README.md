@@ -2,7 +2,7 @@
 
 A **Discord bot** created for learning purpose and personal testing.
 
----
+
 
 ## 🚀 Tech Stack
 
@@ -29,4 +29,3 @@ DISCORD_TOKEN=your_token_here
 bun run dev        # Development mode
 bun run start      # Production mode
 ```
----
