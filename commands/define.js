@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ export default {
             option.setName('word')
                 .setDescription('Word to define')
                 .setRequired(true)
-            ),
+        ),
     async execute(interaction) {
         const word = interaction.options.getString('word');
 
@@ -21,9 +21,21 @@ export default {
             }
 
             const definition = data[0].meanings[0].definitions[0].definition;
-            await interaction.reply(`**${word}**: ${definition}`);
-        }
-        catch (error) {
+            const partOfSpeech = data[0].meanings[0].partOfSpeech;
+
+            const embed = new EmbedBuilder()
+                .setColor(0x1abc9c)
+                .setTitle(`📖 Definition of "${word}"`)
+                .setDescription(`**${definition}**`)
+                .addFields(
+                    { name: 'Part of Speech', value: partOfSpeech, inline: true },
+                    { name: 'Word', value: word, inline: true },
+                )
+                .setFooter({ text: 'Powered by Dictionary API' })
+
+            await interaction.reply({ embeds: [embed] });
+
+        } catch (error) {
             console.error(error);
             await interaction.reply("Something went wrong while fetching the definition.");
         }
